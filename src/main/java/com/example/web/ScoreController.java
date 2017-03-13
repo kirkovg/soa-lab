@@ -2,6 +2,7 @@ package com.example.web;
 
 import com.example.model.Score;
 import com.example.repository.ScoreRepository;
+import com.example.repository.impl.ScoreRepositoryImpl;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.RequestMapping;
