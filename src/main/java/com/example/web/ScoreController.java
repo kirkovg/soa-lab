@@ -1,12 +1,7 @@
 package com.example.web;
 
-import com.example.model.League;
-import com.example.model.Player;
 import com.example.model.Score;
-import com.example.model.Team;
-import com.example.repository.ScoreRepository;
-import com.example.repository.impl.ScoreRepositoryImpl;
-
+import com.example.service.ScoreService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -15,49 +10,33 @@ import org.springframework.web.bind.annotation.RestController;
 
 import java.util.List;
 
-/**
- * Created by Win 8 on 13.03.2017.
- */
 @RestController
 @RequestMapping(value = "/api", produces = "application/json")
 public class ScoreController {
 
-    private ScoreRepository scoreRepository;
+    private ScoreService scoreService;
 
     @Autowired
-    public ScoreController(ScoreRepository scoreRepository) {
-        this.scoreRepository = scoreRepository;
+    public ScoreController(ScoreService scoreService) {
+        this.scoreService = scoreService;
     }
 
-    @RequestMapping(value = "/findLeagueByName", method = RequestMethod.GET)
-    public League getLeagueByName(@RequestParam(value = "leagueName", defaultValue = "EFL") String name) {
-        return scoreRepository.findLeagueByName(name);
+    @RequestMapping(value = "/addScore", method = RequestMethod.POST)
+    public Score addScore(@RequestParam(value = "hostTeamId") Long hostTeamId,
+                         @RequestParam(value = "guestTeamId") Long guestTeamId,
+                         @RequestParam(value = "LeagueId") Long leagueId,
+                         @RequestParam(value = "hostScore") Integer hostScore,
+                         @RequestParam(value = "guestScore") Integer guestScore) {
+        return scoreService.addScore(hostTeamId, guestTeamId, leagueId, hostScore, guestScore);
     }
 
-    @RequestMapping(value = "/findTeamByName", method = RequestMethod.GET)
-    public Team findTeamByName(@RequestParam(value = "teamName", defaultValue = "Arsenal") String name) {
-        return scoreRepository.findTeamByName(name);
+    @RequestMapping(value = "/findScoresByLeagueName", method = RequestMethod.GET)
+    public List<Score> findScoresByLeagueName(@RequestParam(value = "leagueName") String leagueName){
+        return scoreService.findScoresByLeagueName(leagueName);
     }
 
-    @RequestMapping(value = "/addTeam", method = RequestMethod.POST)
-    public void addTeam(@RequestParam(value = "teamName") String name, @RequestParam(value = "leagueName", defaultValue = "Premier League") String leagueName) {
-        League league = scoreRepository.findLeagueByName(leagueName);
-        scoreRepository.addTeam(name, league);
-    }
-
-    @RequestMapping(value = "/addPlayer", method = RequestMethod.POST)
-    public void addPlayer(@RequestParam(value = "playerName") String name, @RequestParam(value = "teamName") String teamName) {
-        Team team = scoreRepository.findTeamByName(teamName);
-        scoreRepository.addPlayerToTeam(name, team);
-    }
-
-    @RequestMapping(value = "/getScoresByLeague", method = RequestMethod.GET)
-    public List<Score> getScoresByLeague(@RequestParam(value = "leagueName", defaultValue = "Premier League") String leagueName) {
-        return scoreRepository.getScoresByLeague(leagueName);
-    }
-
-    @RequestMapping(value = "/getScoresBySport", method = RequestMethod.GET)
-    public List<Score> getScoresBySport(@RequestParam(value = "sportName", defaultValue = "football") String sportName) {
-        return scoreRepository.getScoresBySport(sportName);
+    @RequestMapping(value = "/findAllScores", method = RequestMethod.GET)
+    public List<Score> findAllScores(){
+        return scoreService.findAll();
     }
 }

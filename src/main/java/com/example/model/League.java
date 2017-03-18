@@ -9,22 +9,20 @@ public class League {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "league_id")
     private Long id;
 
     private String name;
 
-    @OneToMany(mappedBy = "league")
-    private List<Team> teams;
-
-    @OneToMany(mappedBy = "league")
-    private List<Score> scores;
 
     @ManyToOne
+    @JoinColumn(referencedColumnName = "sport_id")
     private Sport sport;
 
-    public League(List<Team> teams, List<Score> scores, Sport sport) {
-        this.teams = teams;
-        this.scores = scores;
+    public League() {}
+
+    public League(String name, Sport sport) {
+        this.name = name;
         this.sport = sport;
     }
 
@@ -32,12 +30,8 @@ public class League {
         return id;
     }
 
-    public List<Team> getTeams() {
-        return teams;
-    }
-
-    public List<Score> getScores() {
-        return scores;
+    public String getName() {
+        return name;
     }
 
     public Sport getSport() {
