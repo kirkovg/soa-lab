@@ -22,7 +22,7 @@ services:
     labels:
       - "traefik.enable=false"
   141021-app:
-    image: 141021/task4
+    image: 141021/soa-lab
     labels:
       - "traefik.port=8080"
       - "traefik.backend=141021-app"
@@ -33,4 +33,4 @@ services:
       - 141021-mysql
       - 141021-traefik
 volumes:
-  my-datavolume: {}
+  141021-datavolume: {}
