@@ -10,6 +10,19 @@ services:
       - "18080:8080"
     volumes:
       - /var/run/docker.sock:/var/run/docker.sock
+
+  141021-eureka:
+    image: 141021/soa-lab-eureka
+    labels:
+      - "traefik.port=8761"
+      - "traefik.backend=141021-eureka"
+      - "traefik.frontend.rule=Host:my-eureka.dck.mojserver.mk"
+    expose:
+      - "8761"
+    ports:
+      - "8761:8761"
+
+
   141021-mysql:
     image: mysql
     environment:
@@ -21,6 +34,7 @@ services:
       - 141021-datavolume:/var/lib/mysql
     labels:
       - "traefik.enable=false"
+
   141021-app:
     image: 141021/soa-lab
     labels:
@@ -29,8 +43,10 @@ services:
       - "traefik.frontend.rule=Host:141021-app.dck.mojserver.mk"
     links:
       - 141021-mysql
+      - 141021-eureka
     depends_on:
       - 141021-mysql
       - 141021-traefik
+      - 141021-eureka
 volumes:
   141021-datavolume: {}

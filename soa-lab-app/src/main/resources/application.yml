@@ -24,3 +24,7 @@ spring.jpa:
   hibernate:
     dialect: org.hibernate.dialect.MySQLInnoDBDialect
     ddl-auto: update
+eureka:
+  client:
+    service-url:
+    defaultZone: http://141021-eureka:8761/eureka/
