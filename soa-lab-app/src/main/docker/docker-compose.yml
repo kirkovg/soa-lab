@@ -36,7 +36,7 @@ services:
       - "traefik.enable=false"
 
   141021-app:
-    image: 141021/soa-lab
+    image: 141021/soa-lab-app
     labels:
       - "traefik.port=8080"
       - "traefik.backend=141021-app"
