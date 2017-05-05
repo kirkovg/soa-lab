@@ -26,7 +26,7 @@ public class SportController {
         return sportService.addSport(name);
     }
 
-    @RequestMapping(value = "findAllSports", method = RequestMethod.GET)
+    @RequestMapping(value = "/findAllSports", method = RequestMethod.GET)
     public List<Sport> findAllSports(){
         return  sportService.findAll();
     }
