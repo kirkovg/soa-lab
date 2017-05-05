@@ -1,0 +1,108 @@
+version: '2'
+services:
+  141021-traefik:
+    image: traefik
+    command: -c /dev/null --web --docker --docker.domain=dck.mojserver.mk
+    labels:
+      - "traefik.enable=false"
+    ports:
+      - "18000:80"
+      - "18080:8080"
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
+
+  141021-eureka:
+    image: 141021/soa-lab-eureka
+    labels:
+      - "traefik.port=8761"
+      - "traefik.backend=141021-eureka"
+      - "traefik.frontend.rule=PathPrefixStrip:/141021-eureka"
+    expose:
+      - "8761"
+    ports:
+      - "8761:8761"
+
+  141021-zuul:
+    image: 141021/soa-lab-zuul
+    labels:
+      - "traefik.port=8080"
+      - "traefik.backend=141021-zuul"
+      - "traefik.frontend.rule=PathPrefixStrip:/141021-zuul"
+
+  141021-gateway:
+    image: 141021/soa-lab-gateway
+    labels:
+      - "traefik.port=8080"
+      - "traefik.backend=141021-gateway"
+      - "traefik.frontend.rule=PathPrefixStrip:/141021-gateway"
+
+  141021-mysql:
+    image: mysql
+    environment:
+      MYSQL_ROOT_PASSWORD: my-secret-pw
+      MYSQL_USER: dbuser
+      MYSQL_PASSWORD: dbp4ss
+      MYSQL_DATABASE: demo
+    volumes:
+      - my-datavolume:/var/lib/mysql
+    labels:
+      - "traefik.enable=false"
+
+  141021-login:
+    image: 141021/soa-lab-login
+    labels:
+      - "traefik.port=8080"
+      - "traefik.backend=141021-login"
+      - "traefik.frontend.rule=PathPrefixStrip:/141021-login"
+    links:
+      - 141021-mysql
+      - 141021-eureka
+ #     - 141021-zuul
+ #     - 141021-gateway
+    depends_on:
+      - 141021-mysql
+      - 141021-traefik
+      - 141021-eureka
+#      - 141021-zuul
+#      - 141021-gateway
+
+  141021-soa-lab-score-app:
+    image: 141021/soa-lab-score-app
+    labels:
+      - "traefik.port=8080"
+      - "traefik.backend=141021-soa-lab-score-app"
+      - "traefik.frontend.rule=PathPrefixStrip:/141021-soa-lab-score-app"
+    links:
+      - 141021-mysql
+      - 141021-eureka
+#      - 141021-zuul
+ #     - 141021-gateway
+    depends_on:
+      - 141021-mysql
+      - 141021-traefik
+      - 141021-eureka
+#      - 141021-zuul
+#      - 141021-gateway
+#      - 141021-login
+
+  141021-soa-lab-sports-app:
+    image: 141021/soa-lab-sports-app
+    labels:
+      - "traefik.port=8080"
+      - "traefik.backend=141021-soa-lab-sports-app"
+      - "traefik.frontend.rule=PathPrefixStrip:/141021-soa-lab-sports-app"
+    links:
+      - 141021-mysql
+      - 141021-eureka
+#      - 141021-zuul
+#      - 141021-gateway
+    depends_on:
+      - 141021-mysql
+      - 141021-traefik
+      - 141021-eureka
+#      - 141021-zuul
+#      - 141021-gateway
+#      - 141021-login
+
+volumes:
+  141021-datavolume: {}
